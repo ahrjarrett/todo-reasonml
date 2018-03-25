@@ -1,5 +1,8 @@
-/*  This throws an error at the moment,
- *  but I want to know how to import raw files (aka, CSS) */
+/*  TODO:  */
+/*  Break Input and TodoItem into own files  */
+/*  (already created) inside this directory. */
+/*  Actually, create a =components= directionry */
+/*  and host them there. Also, consider renaming? */
 [%bs.raw {|require('./app.css')|}];
 
 type todo = {
