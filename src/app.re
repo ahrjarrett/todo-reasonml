@@ -1,6 +1,7 @@
 /*  This throws an error at the moment,
  *  but I want to know how to import raw files (aka, CSS) */
-/* [%bs.raw {|require(./app.css)|}]; */
+[%bs.raw {|require('./app.css')|}];
+
 type todo = {
   id: int,
   text: string,
@@ -62,6 +63,29 @@ module Input = {
   };
 };
 
+module TodoItem = {
+  let component = ReasonReact.statelessComponent("TodoItem");
+  let make = (~todo: todo, ~onToggle, ~clickDelete, _children) => {
+    ...component,
+    /* I don't understand why _self...is this bc it's stateless? */
+    render: _self =>
+      <div className="item" onClick=(_e => onToggle())>
+        <input
+          className="checkbox"
+          _type="checkbox"
+          checked=(Js.Boolean.to_js_boolean(todo.completed))
+        />
+        <label> (toString(todo.text)) </label>
+        <input
+          _type="button"
+          className="btn-delete"
+          value="x"
+          onClick=(_e => clickDelete())
+        />
+      </div>,
+  };
+};
+
 let component = ReasonReact.reducerComponent("App");
 
 let make = _children => {
@@ -77,5 +101,21 @@ let make = _children => {
     <div className="App">
       <h3> (toString("Todo App")) </h3>
       <Input onSubmit=(reduce(todo => Add(todo))) />
+      <div className="todoList">
+        (
+          List.map(
+            todo =>
+              <TodoItem
+                key=(string_of_int(todo.id))
+                todo
+                onToggle=(reduce(() => Check(todo.id)))
+                clickDelete=(reduce(() => Delete(todo.id)))
+              />,
+            todos,
+          )
+          |> Array.of_list
+          |> ReasonReact.arrayToElement
+        )
+      </div>
     </div>,
 };
